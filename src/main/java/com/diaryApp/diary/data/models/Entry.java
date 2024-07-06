@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 public class Entry {
     @Id
     private String id;
+    private String userId;
+    private String diaryId;
     private String title;
     private String content;
     private LocalDateTime createdAt;

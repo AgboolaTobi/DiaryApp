@@ -6,10 +6,10 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class UserRegistrationRequest {
-    private String username;
-    private String password;
+
+public class UserAddDiaryRequest {
     private String email;
+    private String password;
     private String diaryName;
     private String diaryDescription;
     private DiaryCategory diaryCategory;
