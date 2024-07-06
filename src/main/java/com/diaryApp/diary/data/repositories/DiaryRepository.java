@@ -4,6 +4,6 @@ import com.diaryApp.diary.data.models.Diary;
 import com.diaryApp.diary.data.models.DiaryCategory;
 import org.springframework.data.repository.CrudRepository;
 
-public interface DiaryRepository extends CrudRepository<Diary, Integer> {
+public interface DiaryRepository extends CrudRepository<Diary, String> {
     Diary findByDiaryCategory(DiaryCategory category);
 }

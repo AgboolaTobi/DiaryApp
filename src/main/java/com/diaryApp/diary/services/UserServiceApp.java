@@ -54,6 +54,7 @@ public class UserServiceApp implements UserService{
         diary.setDiaryName(request.getDiaryName());
         diary.setDiaryDescription(request.getDiaryDescription());
         diary.setDiaryCategory(request.getDiaryCategory());
+        diary.setCreatedAt(LocalDateTime.now());
         diaryRepository.save(diary);
         userDiaries.add(diary);
         user.setDiaries(userDiaries);

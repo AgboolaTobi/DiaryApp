@@ -28,7 +28,7 @@ public class DiaryServiceApp implements DiaryService {
 
     @Override
     public Optional<Diary> findByDiaryId(String diaryId) {
-        return diaryRepository.findById(Integer.valueOf(diaryId));
+        return diaryRepository.findById(diaryId);
     }
 
 

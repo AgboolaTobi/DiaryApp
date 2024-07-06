@@ -57,7 +57,7 @@ public class UserTest {
     @Test
     public void testThatAListOfUserExistingDiaryCanBeRetrieved() throws UserNotFoundException {
         GetUserDiaryRequest request = new GetUserDiaryRequest();
-        request.setUserId("6688aee8124da65ae405e0ea");
+        request.setUserId("6688b357f1ce641d49890d35");
 
         GetUserDiaryResponse response = userService.getAllUserDiary(request);
         System.out.println(response);
@@ -68,8 +68,8 @@ public class UserTest {
     @Test
     public void testThatAUserCanCreateEntryInADiary() throws UserNotFoundException, DiaryNotFoundException {
         EntryCreationRequest request = new EntryCreationRequest();
-        request.setUserId("6688aee8124da65ae405e0ea");
-        request.setDiaryId("6688aee8124da65ae405e0e9");
+        request.setUserId("6688b357f1ce641d49890d35");
+        request.setDiaryId("6688b357f1ce641d49890d34");
         request.setTitle("Primary Education");
         request.setContent("Attended- Early Life Kiddies College, Osogbo. Between 2000 to 2004");
 
