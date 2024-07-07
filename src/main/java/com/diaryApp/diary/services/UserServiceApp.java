@@ -6,15 +6,10 @@ import com.diaryApp.diary.data.models.Entry;
 import com.diaryApp.diary.data.models.User;
 import com.diaryApp.diary.data.repositories.DiaryRepository;
 import com.diaryApp.diary.data.repositories.UserRepository;
-import com.diaryApp.diary.dtos.requests.EntryCreationRequest;
-import com.diaryApp.diary.dtos.requests.GetUserDiaryRequest;
-import com.diaryApp.diary.dtos.requests.UserAddDiaryRequest;
-import com.diaryApp.diary.dtos.requests.UserRegistrationRequest;
-import com.diaryApp.diary.dtos.responses.EntryCreationResponse;
-import com.diaryApp.diary.dtos.responses.GetUserDiaryResponse;
-import com.diaryApp.diary.dtos.responses.UserAddDiaryResponse;
-import com.diaryApp.diary.dtos.responses.UserRegistrationResponse;
+import com.diaryApp.diary.dtos.requests.*;
+import com.diaryApp.diary.dtos.responses.*;
 import com.diaryApp.diary.exceptions.DiaryNotFoundException;
+import com.diaryApp.diary.exceptions.EntryNotFoundException;
 import com.diaryApp.diary.exceptions.UserExistException;
 import com.diaryApp.diary.exceptions.UserNotFoundException;
 import lombok.AllArgsConstructor;
@@ -39,29 +34,17 @@ public class UserServiceApp implements UserService{
 
         if (existingUser != null ) throw new UserExistException("User already exists");
 
-        User user = new User();
-
-
-        user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
-        user.setUsername(request.getUsername());
-        user.setCreatedAt(LocalDateTime.now());
-
+        User user = createUser(request);
 
         List<Diary> userDiaries = new ArrayList<>();
 
-        Diary diary = new Diary();
-        diary.setDiaryName(request.getDiaryName());
-        diary.setDiaryDescription(request.getDiaryDescription());
-        diary.setDiaryCategory(request.getDiaryCategory());
-        diary.setCreatedAt(LocalDateTime.now());
+        Diary diary = createDiary(request);
 
 
         List<Entry> userEntries = new ArrayList<>();
         diary.setEntries(userEntries);
         diaryService.saveDiary(diary);
 
-//        diaryRepository.save(diary);
         userDiaries.add(diary);
         user.setDiaries(userDiaries);
         userRepository.save(user);
@@ -72,6 +55,24 @@ public class UserServiceApp implements UserService{
         response.setUserId(user.getId());
         response.setMessage("Registration successful");
         return response;
+    }
+
+    private static User createUser(UserRegistrationRequest request) {
+        User user = new User();
+        user.setEmail(request.getEmail());
+        user.setPassword(request.getPassword());
+        user.setUsername(request.getUsername());
+        user.setCreatedAt(LocalDateTime.now());
+        return user;
+    }
+
+    private static Diary createDiary(UserRegistrationRequest request) {
+        Diary diary = new Diary();
+        diary.setDiaryName(request.getDiaryName());
+        diary.setDiaryDescription(request.getDiaryDescription());
+        diary.setDiaryCategory(request.getDiaryCategory());
+        diary.setCreatedAt(LocalDateTime.now());
+        return diary;
     }
 
     @Override
@@ -132,6 +133,29 @@ public class UserServiceApp implements UserService{
         response.setMessage("Entry successfully created");
         return response;
 
+    }
+
+    @Override
+    public ViewAllDiaryEntriesResponse viewDiary(ViewAllDiaryEntriesRequest request) throws UserNotFoundException, EntryNotFoundException, DiaryNotFoundException {
+        User existingUser = userRepository.findById(request.getUserId()).orElse(null);
+        if (existingUser == null) throw new UserNotFoundException("Invalid user details");
+
+        Diary targetDiary = diaryService.findByDiaryId(request.getDiaryId()).orElse(null);
+        if (targetDiary == null) throw new DiaryNotFoundException("This diary does not exist or has been deleted");
+
+        return getViewAllDiaryEntriesResponse(targetDiary, existingUser);
+
+    }
+
+    private static ViewAllDiaryEntriesResponse getViewAllDiaryEntriesResponse(Diary targetDiary, User existingUser) throws EntryNotFoundException {
+        List<Entry> existingTargetDairyEntries = targetDiary.getEntries();
+        if (existingTargetDairyEntries == null) throw new EntryNotFoundException("There are no entries in this diary at the moment...");
+
+        ViewAllDiaryEntriesResponse response = new ViewAllDiaryEntriesResponse();
+
+        response.setMessage("Dear " + existingUser.getUsername() + " " + " here is a list of your entries " + existingTargetDairyEntries);
+        response.setDiaryEntries(existingTargetDairyEntries);
+        return response;
     }
 
     private User fetchUserByEmail(String email) throws UserNotFoundException {

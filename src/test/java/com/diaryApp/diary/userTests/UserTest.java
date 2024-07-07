@@ -1,14 +1,8 @@
 package com.diaryApp.diary.userTests;
 
 import com.diaryApp.diary.data.models.DiaryCategory;
-import com.diaryApp.diary.dtos.requests.EntryCreationRequest;
-import com.diaryApp.diary.dtos.requests.GetUserDiaryRequest;
-import com.diaryApp.diary.dtos.requests.UserAddDiaryRequest;
-import com.diaryApp.diary.dtos.requests.UserRegistrationRequest;
-import com.diaryApp.diary.dtos.responses.EntryCreationResponse;
-import com.diaryApp.diary.dtos.responses.GetUserDiaryResponse;
-import com.diaryApp.diary.dtos.responses.UserAddDiaryResponse;
-import com.diaryApp.diary.dtos.responses.UserRegistrationResponse;
+import com.diaryApp.diary.dtos.requests.*;
+import com.diaryApp.diary.dtos.responses.*;
 import com.diaryApp.diary.exceptions.DiaryNotFoundException;
 import com.diaryApp.diary.exceptions.UserExistException;
 import com.diaryApp.diary.exceptions.UserNotFoundException;
@@ -94,11 +88,22 @@ public class UserTest {
     public void testThatAUserCanMakeEntryInMultipleDiaries() throws UserNotFoundException, DiaryNotFoundException {
         EntryCreationRequest request = new EntryCreationRequest();
         request.setUserId("668a73b093851159dd3e5781");
-        request.setDiaryId("668a73b093851159dd3e5781");
+        request.setDiaryId("668a7500a2536d1012d2b10b");
         request.setTitle("Family matters");
         request.setContent("From a polygamous family of 13. One Dad, three mums and nine children. I'm the 8th of the 9...");
 
         EntryCreationResponse response = userService.createEntry(request);
         assertThat(response).isNotNull();
+    }
+
+    @Test
+    public  void testThatAUserCanViewAllEntriesInAPArticularDiary(){
+        ViewAllDiaryEntriesRequest request = new ViewAllDiaryEntriesRequest();
+        request.setUserId("668a73b093851159dd3e5781");
+        request.setDiaryId("668a73b093851159dd3e5780");
+        ViewAllDiaryEntriesResponse response = userService.viewDiary(request);
+
+        assertThat(response).isNotNull();
+
     }
 }
