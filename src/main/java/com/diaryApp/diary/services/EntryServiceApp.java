@@ -19,4 +19,9 @@ public class EntryServiceApp implements EntryService{
     public Entry findEntryById(String entryId) {
         return entryRepository.findById(entryId).orElse(null);
     }
+
+    @Override
+    public void deleteEntry(Entry targetEntry) {
+        entryRepository.delete(targetEntry);
+    }
 }

@@ -50,7 +50,10 @@ public class UserServiceApp implements UserService{
         userRepository.save(user);
 
 
+        return getUserRegistrationResponse(user);
+    }
 
+    private static UserRegistrationResponse getUserRegistrationResponse(User user) {
         UserRegistrationResponse response = new UserRegistrationResponse();
         response.setUserId(user.getId());
         response.setMessage("Registration successful");
@@ -87,7 +90,7 @@ public class UserServiceApp implements UserService{
     @Override
     public GetUserDiaryResponse getAllUserDiary(GetUserDiaryRequest request) throws UserNotFoundException {
         User existingUser = userRepository.findById(request.getUserId()).orElse(null);
-        if (existingUser == null) throw new UserNotFoundException("Invalid user details");
+        validateUserExistence(existingUser, "Invalid user details");
 
         List<Diary> existingUserDiaries  = existingUser.getDiaries();
         GetUserDiaryResponse response = new GetUserDiaryResponse();
@@ -110,18 +113,12 @@ public class UserServiceApp implements UserService{
     @Override
     public EntryCreationResponse createEntry(EntryCreationRequest request) throws UserNotFoundException, DiaryNotFoundException {
         User existingUser = findById(request.getUserId());
-        if (existingUser == null) throw new UserNotFoundException("User does not exist");
+        validateUserExistence(existingUser, "User does not exist");
         List<Diary> existingUserDiaries = existingUser.getDiaries();
         Diary targetDiary = diaryService.findByDiaryId(request.getDiaryId()).orElse(null);
         if (targetDiary == null) throw new DiaryNotFoundException("Diary does not exist");
 
-        Entry entry = new Entry();
-
-        entry.setTitle(request.getTitle());
-        entry.setUserId(existingUser.getId());
-        entry.setDiaryId(targetDiary.getId());
-        entry.setContent(request.getContent());
-        entry.setCreatedAt(LocalDateTime.now());
+        Entry entry = createEntry(request, existingUser, targetDiary);
         entryService.saveEntry(entry);
         List<Entry> diaryEntries = targetDiary.getEntries();
         diaryEntries.add(entry);
@@ -135,10 +132,21 @@ public class UserServiceApp implements UserService{
 
     }
 
+    private static Entry createEntry(EntryCreationRequest request, User existingUser, Diary targetDiary) {
+        Entry entry = new Entry();
+
+        entry.setTitle(request.getTitle());
+        entry.setUserId(existingUser.getId());
+        entry.setDiaryId(targetDiary.getId());
+        entry.setContent(request.getContent());
+        entry.setCreatedAt(LocalDateTime.now());
+        return entry;
+    }
+
     @Override
     public ViewAllDiaryEntriesResponse viewDiary(ViewAllDiaryEntriesRequest request) throws UserNotFoundException, EntryNotFoundException, DiaryNotFoundException {
-        User existingUser = userRepository.findById(request.getUserId()).orElse(null);
-        if (existingUser == null) throw new UserNotFoundException("Invalid user details");
+        User existingUser = getExistingUser(request.getUserId());
+        validateUserExistence(existingUser, "Invalid user details");
 
         Diary targetDiary = diaryService.findByDiaryId(request.getDiaryId()).orElse(null);
         if (targetDiary == null) throw new DiaryNotFoundException("This diary does not exist or has been deleted");
@@ -149,8 +157,8 @@ public class UserServiceApp implements UserService{
 
     @Override
     public ViewAnEntryInADiaryResponse viewDiaryEntry(ViewAnEntryInADiaryRequest request) throws UserNotFoundException, DiaryNotFoundException {
-        User existingUser = getExistingUser(request);
-        if (existingUser == null) throw new UserNotFoundException("Invalid user details");
+        User existingUser = getExistingUser(request.getUserId());
+        validateUserExistence(existingUser, "Invalid user details");
 
         Diary targetDiary = diaryService.findByDiaryId(request.getDiaryId()).orElse(null);
         if (targetDiary == null) throw new DiaryNotFoundException("This diary does not exist or has been deleted");
@@ -159,21 +167,26 @@ public class UserServiceApp implements UserService{
         return getViewEntryResponse(targetEntry);
     }
 
-    private User getExistingUser(ViewAnEntryInADiaryRequest request) {
-        return userRepository.findById(request.getUserId()).orElse(null);
+    private static void validateUserExistence(User existingUser, String Invalid_user_details) throws UserNotFoundException {
+        if (existingUser == null) throw new UserNotFoundException(Invalid_user_details);
+    }
+
+    private User getExistingUser( String userId) {
+        return userRepository.findById(userId).orElse(null);
     }
 
     @Override
     public DeleteEntryResponse deleteEntry(DeleteEntryRequest request) throws UserNotFoundException, DiaryNotFoundException {
         User existingUser = userRepository.findById(request.getUserId()).orElse(null);
-        if (existingUser == null) throw new UserNotFoundException("Invalid user details");
+        validateUserExistence(existingUser, "Invalid user details");
 
         Diary targetDiary = diaryService.findByDiaryId(request.getDiaryId()).orElse(null);
         if (targetDiary == null) throw new DiaryNotFoundException("This diary does not exist or has been deleted");
 
         Entry targetEntry = entryService.findEntryById(request.getEntryId());
         targetDiary.getEntries().remove(targetEntry);
-        diaryRepository.save(targetDiary);
+        entryService.deleteEntry(targetEntry);
+        diaryService.saveDiary(targetDiary);
         userRepository.save(existingUser);
         return deleteEntryResponse();
     }

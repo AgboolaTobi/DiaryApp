@@ -8,4 +8,6 @@ public interface EntryService {
     void saveEntry(Entry entries);
 
     Entry findEntryById(String entryId);
+
+    void deleteEntry(Entry targetEntry);
 }
