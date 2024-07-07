@@ -105,6 +105,17 @@ public class UserTest {
         ViewAllDiaryEntriesResponse response = userService.viewDiary(request);
         System.out.println(response);
         assertThat(response).isNotNull();
+    }
+
+    @Test
+    public void testThatAUserCanViewASpecificEntryInASpecificDiary(){
+        ViewAnEntryInADiaryRequest request = new ViewAnEntryInADiaryRequest();
+
+    }
+
+    @Test
+    public void testThatAUserCanDeleteASpecificDiaryEntry() throws UserNotFoundException, DiaryNotFoundException {
+        DeleteEntryRequest request = new DeleteEntryRequest();
 
     }
 }
