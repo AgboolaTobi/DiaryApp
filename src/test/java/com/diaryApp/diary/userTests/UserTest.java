@@ -108,7 +108,7 @@ public class UserTest {
     }
 
     @Test
-    public void testThatAUserCanViewASpecificEntryInASpecificDiary(){
+    public void testThatAUserCanViewASpecificEntryInASpecificDiary() throws UserNotFoundException, DiaryNotFoundException {
         ViewAnEntryInADiaryRequest request = new ViewAnEntryInADiaryRequest();
         request.setUserId("668a73b093851159dd3e5781");
         request.setDiaryId("668a73b093851159dd3e5780");
@@ -124,6 +124,13 @@ public class UserTest {
     @Test
     public void testThatAUserCanDeleteASpecificDiaryEntry() {
         DeleteEntryRequest request = new DeleteEntryRequest();
+        request.setUserId("668a73b093851159dd3e5781");
+        request.setDiaryId("668a73b093851159dd3e5780");
+        request.setEntryId("668a756225dad87e4de659f2");
+
+        DeleteEntryResponse response = userService.deleteEntry(request);
+        assertThat(response).isNotNull();
+
 
 
     }

@@ -159,6 +159,11 @@ public class UserServiceApp implements UserService{
         return getViewEntryResponse(targetEntry);
     }
 
+    @Override
+    public DeleteEntryResponse deleteEntry(DeleteEntryRequest request) {
+        return null;
+    }
+
     private static ViewAnEntryInADiaryResponse getViewEntryResponse(Entry targetEntry) {
         ViewAnEntryInADiaryResponse response = new ViewAnEntryInADiaryResponse();
         response.setTargetEntry(targetEntry);
