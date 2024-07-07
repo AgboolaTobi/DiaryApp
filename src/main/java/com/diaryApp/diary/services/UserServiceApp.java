@@ -55,7 +55,13 @@ public class UserServiceApp implements UserService{
         diary.setDiaryDescription(request.getDiaryDescription());
         diary.setDiaryCategory(request.getDiaryCategory());
         diary.setCreatedAt(LocalDateTime.now());
-        diaryRepository.save(diary);
+
+
+        List<Entry> userEntries = new ArrayList<>();
+        diary.setEntries(userEntries);
+        diaryService.saveDiary(diary);
+
+//        diaryRepository.save(diary);
         userDiaries.add(diary);
         user.setDiaries(userDiaries);
         userRepository.save(user);
@@ -107,14 +113,16 @@ public class UserServiceApp implements UserService{
         List<Diary> existingUserDiaries = existingUser.getDiaries();
         Diary targetDiary = diaryService.findByDiaryId(request.getDiaryId()).orElse(null);
         if (targetDiary == null) throw new DiaryNotFoundException("Diary does not exist");
-        List<Entry> diaryEntries = new ArrayList<>();
+
         Entry entry = new Entry();
+
         entry.setTitle(request.getTitle());
         entry.setUserId(existingUser.getId());
         entry.setDiaryId(targetDiary.getId());
         entry.setContent(request.getContent());
         entry.setCreatedAt(LocalDateTime.now());
         entryService.saveEntry(entry);
+        List<Entry> diaryEntries = targetDiary.getEntries();
         diaryEntries.add(entry);
         targetDiary.setEntries(diaryEntries);
         diaryRepository.save(targetDiary);
@@ -140,6 +148,8 @@ public class UserServiceApp implements UserService{
         newDiary.setDiaryDescription(request.getDiaryDescription());
         newDiary.setDiaryCategory(request.getDiaryCategory());
         newDiary.setCreatedAt(LocalDateTime.now());
+        List<Entry> userEntries = new ArrayList<>();
+        newDiary.setEntries(userEntries);
         return newDiary;
     }
 

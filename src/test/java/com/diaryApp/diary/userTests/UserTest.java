@@ -57,7 +57,7 @@ public class UserTest {
     @Test
     public void testThatAListOfUserExistingDiaryCanBeRetrieved() throws UserNotFoundException {
         GetUserDiaryRequest request = new GetUserDiaryRequest();
-        request.setUserId("6688b357f1ce641d49890d35");
+        request.setUserId("668a73b093851159dd3e5781");
 
         GetUserDiaryResponse response = userService.getAllUserDiary(request);
         System.out.println(response);
@@ -68,13 +68,37 @@ public class UserTest {
     @Test
     public void testThatAUserCanCreateEntryInADiary() throws UserNotFoundException, DiaryNotFoundException {
         EntryCreationRequest request = new EntryCreationRequest();
-        request.setUserId("6688b357f1ce641d49890d35");
-        request.setDiaryId("6688b357f1ce641d49890d34");
+        request.setUserId("668a73b093851159dd3e5781");
+        request.setDiaryId("668a73b093851159dd3e5780");
         request.setTitle("Primary Education");
         request.setContent("Attended- Early Life Kiddies College, Osogbo. Between 2000 to 2004");
 
         EntryCreationResponse response = userService.createEntry(request);
         assertThat(response).isNotNull();
 
+    }
+
+    @Test
+    public void testThatAUserCanCreateMultipleEntriesInADiary() throws UserNotFoundException, DiaryNotFoundException {
+        EntryCreationRequest request = new EntryCreationRequest();
+        request.setUserId("668a73b093851159dd3e5781");
+        request.setDiaryId("668a73b093851159dd3e5780");
+        request.setTitle("Secondary Education");
+        request.setContent("Attended Fakunle Comprehensive High School, Osogbo. Between from 2004 to 2010.");
+
+        EntryCreationResponse response = userService.createEntry(request);
+        assertThat(response).isNotNull();
+    }
+
+    @Test
+    public void testThatAUserCanMakeEntryInMultipleDiaries() throws UserNotFoundException, DiaryNotFoundException {
+        EntryCreationRequest request = new EntryCreationRequest();
+        request.setUserId("668a73b093851159dd3e5781");
+        request.setDiaryId("668a73b093851159dd3e5781");
+        request.setTitle("Family matters");
+        request.setContent("From a polygamous family of 13. One Dad, three mums and nine children. I'm the 8th of the 9...");
+
+        EntryCreationResponse response = userService.createEntry(request);
+        assertThat(response).isNotNull();
     }
 }
