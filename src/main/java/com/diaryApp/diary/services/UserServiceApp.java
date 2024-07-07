@@ -147,6 +147,11 @@ public class UserServiceApp implements UserService{
 
     }
 
+    @Override
+    public ViewAnEntryInADiaryResponse viewDiaryEntry(ViewAnEntryInADiaryRequest request) {
+        return null;
+    }
+
     private static ViewAllDiaryEntriesResponse getViewAllDiaryEntriesResponse(Diary targetDiary, User existingUser) throws EntryNotFoundException {
         List<Entry> existingTargetDairyEntries = targetDiary.getEntries();
         if (existingTargetDairyEntries == null) throw new EntryNotFoundException("There are no entries in this diary at the moment...");
