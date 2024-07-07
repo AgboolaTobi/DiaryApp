@@ -28,5 +28,5 @@ public interface UserService {
 
     ViewAnEntryInADiaryResponse viewDiaryEntry(ViewAnEntryInADiaryRequest request) throws UserNotFoundException, DiaryNotFoundException;
 
-    DeleteEntryResponse deleteEntry(DeleteEntryRequest request);
+    DeleteEntryResponse deleteEntry(DeleteEntryRequest request) throws UserNotFoundException, DiaryNotFoundException;
 }

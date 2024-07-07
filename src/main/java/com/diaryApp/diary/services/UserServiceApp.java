@@ -149,7 +149,7 @@ public class UserServiceApp implements UserService{
 
     @Override
     public ViewAnEntryInADiaryResponse viewDiaryEntry(ViewAnEntryInADiaryRequest request) throws UserNotFoundException, DiaryNotFoundException {
-        User existingUser = userRepository.findById(request.getUserId()).orElse(null);
+        User existingUser = getExistingUser(request);
         if (existingUser == null) throw new UserNotFoundException("Invalid user details");
 
         Diary targetDiary = diaryService.findByDiaryId(request.getDiaryId()).orElse(null);
@@ -159,9 +159,29 @@ public class UserServiceApp implements UserService{
         return getViewEntryResponse(targetEntry);
     }
 
+    private User getExistingUser(ViewAnEntryInADiaryRequest request) {
+        return userRepository.findById(request.getUserId()).orElse(null);
+    }
+
     @Override
-    public DeleteEntryResponse deleteEntry(DeleteEntryRequest request) {
-        return null;
+    public DeleteEntryResponse deleteEntry(DeleteEntryRequest request) throws UserNotFoundException, DiaryNotFoundException {
+        User existingUser = userRepository.findById(request.getUserId()).orElse(null);
+        if (existingUser == null) throw new UserNotFoundException("Invalid user details");
+
+        Diary targetDiary = diaryService.findByDiaryId(request.getDiaryId()).orElse(null);
+        if (targetDiary == null) throw new DiaryNotFoundException("This diary does not exist or has been deleted");
+
+        Entry targetEntry = entryService.findEntryById(request.getEntryId());
+        targetDiary.getEntries().remove(targetEntry);
+        diaryRepository.save(targetDiary);
+        userRepository.save(existingUser);
+        return deleteEntryResponse();
+    }
+
+    private static DeleteEntryResponse deleteEntryResponse() {
+        DeleteEntryResponse response = new DeleteEntryResponse();
+        response.setMessage("Entry successfully deleted");
+        return response;
     }
 
     private static ViewAnEntryInADiaryResponse getViewEntryResponse(Entry targetEntry) {
