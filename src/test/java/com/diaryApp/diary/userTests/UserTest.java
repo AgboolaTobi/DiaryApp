@@ -110,6 +110,9 @@ public class UserTest {
     @Test
     public void testThatAUserCanViewASpecificEntryInASpecificDiary(){
         ViewAnEntryInADiaryRequest request = new ViewAnEntryInADiaryRequest();
+        request.setUserId("668a73b093851159dd3e5781");
+        request.setDiaryId("668a73b093851159dd3e5780");
+        request.setEntryId("");
 
     }
 
