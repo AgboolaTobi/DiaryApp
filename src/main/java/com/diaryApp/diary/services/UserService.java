@@ -26,5 +26,5 @@ public interface UserService {
 
     ViewAllDiaryEntriesResponse viewDiary(ViewAllDiaryEntriesRequest request) throws UserNotFoundException, EntryNotFoundException, DiaryNotFoundException;
 
-    ViewAnEntryInADiaryResponse viewDiaryEntry(ViewAnEntryInADiaryRequest request);
+    ViewAnEntryInADiaryResponse viewDiaryEntry(ViewAnEntryInADiaryRequest request) throws UserNotFoundException, DiaryNotFoundException;
 }

@@ -6,4 +6,6 @@ import com.diaryApp.diary.data.models.Entry;
 
 public interface EntryService {
     void saveEntry(Entry entries);
+
+    Entry findEntryById(String entryId);
 }

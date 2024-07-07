@@ -5,8 +5,6 @@ import com.diaryApp.diary.data.repositories.EntryRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @AllArgsConstructor
 public class EntryServiceApp implements EntryService{
@@ -15,5 +13,10 @@ public class EntryServiceApp implements EntryService{
     @Override
     public void saveEntry(Entry entry) {
         entryRepository.save(entry);
+    }
+
+    @Override
+    public Entry findEntryById(String entryId) {
+        return entryRepository.findById(entryId).orElse(null);
     }
 }

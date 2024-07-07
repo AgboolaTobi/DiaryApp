@@ -148,8 +148,21 @@ public class UserServiceApp implements UserService{
     }
 
     @Override
-    public ViewAnEntryInADiaryResponse viewDiaryEntry(ViewAnEntryInADiaryRequest request) {
-        return null;
+    public ViewAnEntryInADiaryResponse viewDiaryEntry(ViewAnEntryInADiaryRequest request) throws UserNotFoundException, DiaryNotFoundException {
+        User existingUser = userRepository.findById(request.getUserId()).orElse(null);
+        if (existingUser == null) throw new UserNotFoundException("Invalid user details");
+
+        Diary targetDiary = diaryService.findByDiaryId(request.getDiaryId()).orElse(null);
+        if (targetDiary == null) throw new DiaryNotFoundException("This diary does not exist or has been deleted");
+
+        Entry targetEntry = entryService.findEntryById(request.getEntryId());
+        return getViewEntryResponse(targetEntry);
+    }
+
+    private static ViewAnEntryInADiaryResponse getViewEntryResponse(Entry targetEntry) {
+        ViewAnEntryInADiaryResponse response = new ViewAnEntryInADiaryResponse();
+        response.setTargetEntry(targetEntry);
+        return response;
     }
 
     private static ViewAllDiaryEntriesResponse getViewAllDiaryEntriesResponse(Diary targetDiary, User existingUser) throws EntryNotFoundException {
