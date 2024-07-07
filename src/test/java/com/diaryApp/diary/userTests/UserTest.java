@@ -4,6 +4,7 @@ import com.diaryApp.diary.data.models.DiaryCategory;
 import com.diaryApp.diary.dtos.requests.*;
 import com.diaryApp.diary.dtos.responses.*;
 import com.diaryApp.diary.exceptions.DiaryNotFoundException;
+import com.diaryApp.diary.exceptions.EntryNotFoundException;
 import com.diaryApp.diary.exceptions.UserExistException;
 import com.diaryApp.diary.exceptions.UserNotFoundException;
 import com.diaryApp.diary.services.UserService;
@@ -97,12 +98,12 @@ public class UserTest {
     }
 
     @Test
-    public  void testThatAUserCanViewAllEntriesInAPArticularDiary(){
+    public  void testThatAUserCanViewAllEntriesInAPArticularDiary() throws UserNotFoundException, EntryNotFoundException, DiaryNotFoundException {
         ViewAllDiaryEntriesRequest request = new ViewAllDiaryEntriesRequest();
         request.setUserId("668a73b093851159dd3e5781");
         request.setDiaryId("668a73b093851159dd3e5780");
         ViewAllDiaryEntriesResponse response = userService.viewDiary(request);
-
+        System.out.println(response);
         assertThat(response).isNotNull();
 
     }
